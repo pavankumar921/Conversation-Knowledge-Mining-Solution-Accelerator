@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 SUPPORTED_EXTENSIONS = {"pdf", "docx", "xlsx", "csv", "txt", "png", "jpg", "jpeg", "tiff", "bmp", "mp3", "wav", "mp4"}
 
 # Default CU analyzer template for generic document analysis
+# Supported base analyzers: prebuilt-document, prebuilt-audio, prebuilt-video, prebuilt-image
 DEFAULT_ANALYZER_TEMPLATE = {
+    "baseAnalyzerId": "prebuilt-document",
     "scenario": "document",
     "description": "Generic document content extraction",
     "config": {"returnDetails": True},
@@ -46,8 +48,9 @@ DEFAULT_ANALYZER_TEMPLATE = {
 }
 
 # Audio/video analyzer for call transcripts
-AUDIO_ANALYZER_ID = "km-audio"
+AUDIO_ANALYZER_ID = "km_audio"
 AUDIO_ANALYZER_TEMPLATE = {
+    "baseAnalyzerId": "prebuilt-audio",
     "scenario": "audioTranscription",
     "description": "Transcribe and analyze audio call recordings",
     "config": {"returnDetails": True},
@@ -123,7 +126,14 @@ class ContentUnderstandingService:
         return get_settings().azure_content_understanding_api_version
 
     def _default_analyzer_id(self) -> str:
-        return get_settings().azure_content_understanding_analyzer_id
+        return self._normalize_analyzer_id(get_settings().azure_content_understanding_analyzer_id)
+
+    @staticmethod
+    def _normalize_analyzer_id(analyzer_id: str) -> str:
+        """Normalize analyzer IDs to valid CU names by replacing invalid characters."""
+        if not analyzer_id:
+            return "km"  # fallback safe ID
+        return "".join(c if c.isalnum() or c == "_" else "_" for c in analyzer_id)
 
     @staticmethod
     def _audio_fallback_document(filename: str, reason: str) -> ExtractedDocument:
@@ -161,6 +171,7 @@ class ContentUnderstandingService:
         """Create the CU analyzer if it doesn't exist yet."""
         if analyzer_id is None:
             analyzer_id = self._default_analyzer_id()
+        analyzer_id = self._normalize_analyzer_id(analyzer_id)
         if analyzer_id in self._analyzers_ensured:
             return
 

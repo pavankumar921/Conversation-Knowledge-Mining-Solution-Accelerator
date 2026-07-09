@@ -14,6 +14,7 @@ SUPPORTED_EXTENSIONS = {"pdf", "docx", "xlsx", "csv", "txt", "png", "jpg", "jpeg
 
 # Default CU analyzer template for generic document analysis
 DEFAULT_ANALYZER_TEMPLATE = {
+    "baseAnalyzerId": "prebuilt-document",
     "scenario": "document",
     "description": "Generic document content extraction",
     "config": {"returnDetails": True},
@@ -46,8 +47,9 @@ DEFAULT_ANALYZER_TEMPLATE = {
 }
 
 # Audio/video analyzer for call transcripts
-AUDIO_ANALYZER_ID = "km-audio"
+AUDIO_ANALYZER_ID = "km_audio"
 AUDIO_ANALYZER_TEMPLATE = {
+    "baseAnalyzerId": "prebuilt-audio",
     "scenario": "audioTranscription",
     "description": "Transcribe and analyze audio call recordings",
     "config": {"returnDetails": True},

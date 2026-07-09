@@ -10,13 +10,13 @@ param environmentName string
 param location string
 
 @description('Name of the Azure OpenAI chat deployment')
-param chatDeploymentName string = 'gpt-5.1'
+param chatDeploymentName string = 'gpt-5.2'
 
 @description('Name of the Azure OpenAI embedding deployment')
-param embeddingDeploymentName string = 'text-embedding-ada-002'
+param embeddingDeploymentName string = 'text-embedding-3-small'
 
 @description('GPT model version')
-param gptModelVersion string = '2025-11-13'
+param gptModelVersion string = '2025-12-11'
 
 @description('Azure AD tenant ID for authentication')
 param azureAdTenantId string = ''
@@ -115,7 +115,7 @@ module aiServices 'modules/ai-services.bicep' = if (!useExistingAiProject) {
         model: {
           format: 'OpenAI'
           name: embeddingDeploymentName
-          version: '2'
+          version: '1'
         }
         sku: {
           name: 'Standard'
